@@ -1,0 +1,6 @@
+{
+  "name": "AutoParts Pro",
+  "description": "A comprehensive multi-lingual auto parts and sales management application demo supporting English, O'zbekcha, Русский, and 中文.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

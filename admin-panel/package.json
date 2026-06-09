@@ -1,0 +1,20 @@
+{
+  "name": "autoparts-standalone-admin-panel",
+  "version": "1.0.0",
+  "description": "Fully standalone offline-first and API-connected Admin Panel for AutoParts App",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 3001",
+    "dev": "npx http-server -p 3001"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "keywords": [
+    "admin",
+    "standalone",
+    "autoparts"
+  ],
+  "author": "AutoParts Admin Team",
+  "license": "ISC"
+}

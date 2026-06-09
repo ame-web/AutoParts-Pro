@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoParts Standalone Admin Suite</title>
+  <!-- Tailwind CSS & Inter Font -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              charcoal: '#1E293B',
+              slate: '#334155',
+              blue: '#2563EB',
+              emerald: '#059669',
+              amber: '#D97706',
+              rose: '#E11D48',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+  </style>
+  <!-- Lucide Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-55 flex h-screen overflow-hidden text-slate-800">
+
+  <!-- Left Sidebar Navigation -->
+  <aside class="w-68 bg-brand-charcoal h-full text-slate-300 flex flex-col justify-between shrink-0 shadow-xl border-r border-[#1e293b]/50">
+    <div>
+      <!-- Header / Logo -->
+      <div class="p-6 border-b border-slate-700/50 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-brand-blue rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg">
+            ⚙️
+          </div>
+          <div>
+            <h1 class="font-bold text-sm tracking-tight text-white leading-tight">AutoParts</h1>
+            <p class="text-[10px] text-slate-400 font-mono">Standalone Suite</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Menus -->
+      <nav class="p-4 space-y-1.5 flex-1">
+        <p class="text-[10px] uppercase font-mono tracking-wider text-slate-500 px-3 mb-2" id="nav-lbl-navigation">Navigation</p>
+        
+        <button id="btn-tab-dashboard" onclick="switchTab('dashboard')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-300 bg-slate-800/20 hover:bg-slate-800/60 hover:text-white">
+          <i data-lucide="layout-dashboard" class="w-4.5 h-4.5 text-blue-400"></i>
+          <span id="nav-btn-dashboard">Dashboard Overview</span>
+        </button>
+
+        <button id="btn-tab-parts" onclick="switchTab('parts')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800/60 hover:text-white">
+          <i data-lucide="package" class="w-4.5 h-4.5 text-emerald-400"></i>
+          <span id="nav-btn-parts">Parts Catalog</span>
+        </button>
+
+        <button id="btn-tab-customers" onclick="switchTab('customers')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800/60 hover:text-white">
+          <i data-lucide="users" class="w-4.5 h-4.5 text-indigo-400"></i>
+          <span id="nav-btn-customers">Customer Database</span>
+        </button>
+
+        <button id="btn-tab-incidents" onclick="switchTab('incidents')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800/60 hover:text-white">
+          <i data-lucide="shield-alert" class="w-4.5 h-4.5 text-amber-400"></i>
+          <span id="nav-btn-incidents">Incidents & Fleet</span>
+        </button>
+
+        <button id="btn-tab-orders" onclick="switchTab('orders')" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:bg-slate-800/60 hover:text-white">
+          <i data-lucide="shopping-cart" class="w-4.5 h-4.5 text-rose-400"></i>
+          <span id="nav-btn-orders">Order Operations</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Status -->
+    <div class="p-4 border-t border-slate-700/50 space-y-3 bg-slate-900/40">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Sandbox Database</span>
+        </span>
+        <span class="font-mono text-[10px] text-slate-500" id="lbl-version">v1.2 Active</span>
+      </div>
+      <div>
+        <a href="/" target="_blank" rel="noopener noreferrer" class="w-full py-2 px-3 border border-slate-700 bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-300 rounded-lg flex items-center justify-center gap-2 text-xs transition-all font-medium">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span id="btn-go-customer">AutoParts App ↗</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Container -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+    
+    <!-- Top Header -->
+    <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-4">
+        <h2 id="header-title" class="text-xl font-bold tracking-tight text-slate-900">Dashboard Overview</h2>
+        <span class="px-2.5 py-1 text-[10px] font-bold font-mono uppercase bg-slate-100 border border-slate-200 text-slate-600 rounded">
+          DECOUPLED ADMIN
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Multilingual language switcher buttons -->
+        <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+          <button id="btn-lang-en" onclick="setLanguage('en')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all bg-white text-slate-900 shadow-sm border border-slate-200/50">
+            🇬🇧 EN
+          </button>
+          <button id="btn-lang-uz" onclick="setLanguage('uz')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all text-slate-500 hover:text-slate-800">
+            🇺🇿 UZ
+          </button>
+          <button id="btn-lang-ru" onclick="setLanguage('ru')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all text-slate-500 hover:text-slate-800">
+            🇷🇺 RU
+          </button>
+          <button id="btn-lang-zh" onclick="setLanguage('zh')" class="px-3 py-1 text-xs font-semibold rounded-md transition-all text-slate-500 hover:text-slate-800">
+            🇨🇳 ZH
+          </button>
+        </div>
+
+        <!-- System controls -->
+        <button onclick="syncAllData()" class="px-3.5 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg transition-all flex items-center gap-1.5 text-xs font-semibold">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span id="btn-sync">Sync Data</span>
+        </button>
+
+        <button onclick="promptResetDatabase()" class="px-3.5 py-1.5 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 rounded-lg transition-all flex items-center gap-1.5 text-xs font-semibold">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <span id="btn-reset-db">Reset Database</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Workspace -->
+    <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+
+      <!-- Alert Toast Notifications System -->
+      <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2"></div>
+
+      <!-- ================= SECTION 1: DASHBOARD OVERVIEW ================= -->
+      <section id="section-dashboard" class="space-y-8">
+        
+        <!-- Subscription Summary & Financial Hub Widget -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Balance Widget -->
+          <div class="bg-white border border-slate-200/80 rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono" id="card-lbl-total-equity">Total System Equity</p>
+                <h3 id="stat-wallet-total" class="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">$0.00</h3>
+              </div>
+              <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-blue-600">
+                <i data-lucide="wallet" class="w-6 h-6"></i>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 border-t border-slate-100 mt-6 pt-4 text-xs">
+              <div>
+                <span class="text-slate-400 block block mb-0.5" id="card-lbl-available">Available Funds</span>
+                <span id="stat-wallet-available" class="font-bold text-slate-800 font-mono">$0.00</span>
+              </div>
+              <div>
+                <span class="text-slate-400 block mb-0.5" id="card-lbl-pending">Pending Settlements</span>
+                <span id="stat-wallet-pending" class="font-bold text-slate-500 font-mono">$0.00</span>
+              </div>
+            </div>
+
+            <!-- Withdraw action inline -->
+            <div class="mt-4 pt-3 flex items-center gap-2">
+              <input type="number" id="input-withdraw-amount" placeholder="Amount ($)" class="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <button onclick="handleWithdrawFunds()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-lg transition-all shrink-0" id="btn-withdraw-action">
+                Withdraw
+              </button>
+            </div>
+          </div>
+
+          <!-- Subscription Plan status -->
+          <div class="bg-white border border-slate-200/80 rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono" id="card-lbl-subscription">System License Tier</p>
+                <h3 id="stat-subscription-name" class="text-2xl font-extrabold text-indigo-600 tracking-tight mt-1">Enterprise Plan</h3>
+              </div>
+              <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-600">
+                <i data-lucide="shield" class="w-6 h-6"></i>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100 mt-6 pt-4">
+              <div class="flex items-center justify-between text-xs mb-2">
+                <span class="text-slate-500" id="card-lbl-remaining">Days Remaining</span>
+                <span class="font-bold text-slate-800" id="stat-subscription-days">214 days</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-indigo-600 h-full rounded-full" style="width: 75%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions Grid -->
+          <div class="bg-white border border-slate-200/80 rounded-xl p-6 shadow-sm flex flex-col justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono mb-3" id="card-lbl-quick-actions">Quick Diagnostics</p>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="switchTab('parts')" class="p-3 bg-slate-50 hover:bg-slate-150 border border-slate-200/60 rounded-lg transition-all text-left">
+                  <span class="block text-xs font-bold text-slate-800" id="stat-low-stock-count">0</span>
+                  <span class="text-[10px] text-slate-400 font-medium" id="lbl-lbl-low-stock">Low Stock Parts</span>
+                </button>
+                <button onclick="switchTab('incidents')" class="p-3 bg-slate-50 hover:bg-slate-150 border border-slate-200/60 rounded-lg transition-all text-left">
+                  <span class="block text-xs font-bold text-amber-600" id="stat-under-review-count">0</span>
+                  <span class="text-[10px] text-slate-400 font-medium" id="lbl-lbl-incidents">Under Review</span>
+                </button>
+                <button onclick="switchTab('orders')" class="p-3 bg-slate-50 hover:bg-slate-150 border border-slate-200/60 rounded-lg transition-all text-left">
+                  <span class="block text-xs font-bold text-slate-800" id="stat-pending-orders-count">0</span>
+                  <span class="text-[10px] text-slate-400 font-medium" id="lbl-lbl-active-orders">Pending Orders</span>
+                </button>
+                <div class="p-3 bg-slate-50 border border-slate-200/60 rounded-lg text-left">
+                  <span class="block text-xs font-bold text-slate-800" id="stat-customer-count">0</span>
+                  <span class="text-[10px] text-slate-400 font-medium" id="lbl-lbl-total-clients">Clients Registered</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Analytical Stats Cards -->
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-sm text-slate-900" id="lbl-dashboard-active-incidents">Active Operations Logs</h4>
+              <p class="text-xs text-slate-400 mt-0.5" id="lbl-dashboard-active-incidents-sub">Recent outstanding incidents requiring attention</p>
+            </div>
+            <button onclick="switchTab('incidents')" class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1.5">
+              <span id="btn-view-all">View All</span> <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+          <div class="divide-y divide-slate-100 overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold font-mono text-[10px] uppercase border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-6" id="tbl-col-inc-id">ID</th>
+                  <th class="py-3 px-6" id="tbl-col-inc-desc">Description</th>
+                  <th class="py-3 px-6" id="tbl-col-inc-plate">Vehicle Plate</th>
+                  <th class="py-3 px-6" id="tbl-col-inc-date">Report Date</th>
+                  <th class="py-3 px-6" id="tbl-col-inc-status">Status</th>
+                  <th class="py-3 px-6 text-right" id="tbl-col-inc-act">Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-incidents-tbody" class="divide-y divide-slate-100">
+                <!-- Inner incidents rows filled by Javascript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= SECTION 2: PARTS CATALOG MANAGER ================= -->
+      <section id="section-parts" class="space-y-6 hidden">
+        
+        <!-- Controls & Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+          <div>
+            <h3 class="font-bold text-lg text-slate-900" id="title-parts-catalog">Parts Inventory System</h3>
+            <p class="text-xs text-slate-400 mt-1" id="sub-parts-catalog">Track stock quantities, modify unit pricing, and create customized catalog listings</p>
+          </div>
+          
+          <button onclick="openPartModal(null)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-xs tracking-tight transition-all flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span id="btn-add-part">Create New Part</span>
+          </button>
+        </div>
+
+        <!-- Inventory List Table Container -->
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold font-mono text-[10px] uppercase border-b border-slate-200">
+                <tr>
+                  <th class="py-3.5 px-6" id="tbl-col-part-id">Part ID</th>
+                  <th class="py-3.5 px-6" id="tbl-col-part-name">Product Name</th>
+                  <th class="py-3.5 px-6" id="tbl-col-part-model">Compatible Model</th>
+                  <th class="py-3.5 px-6 font-mono text-center" id="tbl-col-part-stock">Stock Level</th>
+                  <th class="py-3.5 px-6 text-center" id="tbl-col-part-price">Price</th>
+                  <th class="py-3.5 px-6" id="tbl-col-part-status">Status</th>
+                  <th class="py-3.5 px-6 text-right" id="tbl-col-part-actions">Operations</th>
+                </tr>
+              </thead>
+              <tbody id="parts-tbody" class="divide-y divide-slate-100">
+                <!-- Inner elements added dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= SECTION 3: CUSTOMER RELATIONS ================= -->
+      <section id="section-customers" class="space-y-6 hidden">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+          <div>
+            <h3 class="font-bold text-lg text-slate-900" id="title-customers">Customer Database</h3>
+            <p class="text-xs text-slate-400 mt-1" id="sub-customers">Manage client membership states, adjust plan tiers, and verify active portfolios</p>
+          </div>
+          
+          <button onclick="openCustomerModal(null)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs tracking-tight transition-all flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span id="btn-add-customer">Add Customer Account</span>
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold font-mono text-[10px] uppercase border-b border-slate-200">
+                <tr>
+                  <th class="py-3.5 px-6" id="tbl-col-cust-id">Client ID</th>
+                  <th class="py-3.5 px-6" id="tbl-col-cust-name">Full Name</th>
+                  <th class="py-3.5 px-6" id="tbl-col-cust-tier">Tier / Plan</th>
+                  <th class="py-3.5 px-6 text-center font-mono" id="tbl-col-cust-orders">Orders</th>
+                  <th class="py-3.5 px-6" id="tbl-col-cust-status">Status</th>
+                  <th class="py-3.5 px-6 text-right" id="tbl-col-cust-actions">Operations</th>
+                </tr>
+              </thead>
+              <tbody id="customers-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamic customer list -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= SECTION 4: INCIDENTS & FLEET REGISTRY ================= -->
+      <section id="section-incidents" class="space-y-8 hidden">
+        
+        <!-- Incidents List -->
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+            <div>
+              <h3 class="font-bold text-lg text-slate-900" id="title-incidents">Incident Management Center</h3>
+              <p class="text-xs text-slate-400 mt-1" id="sub-incidents">Update progress and control resolution statuses of reports filed by vehicles</p>
+            </div>
+            <button onclick="openIncidentModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg text-xs tracking-tight transition-all flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span id="btn-add-incident-root">Record New Failure</span>
+            </button>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-slate-50 text-slate-500 font-semibold font-mono text-[10px] uppercase border-b border-slate-200">
+                  <tr>
+                    <th class="py-3.5 px-6" id="tbl-col-inc-main-id">ID</th>
+                    <th class="py-3.5 px-6" id="tbl-col-inc-main-desc">Incident details</th>
+                    <th class="py-3.5 px-6" id="tbl-col-inc-main-plate">Vehicle Plate</th>
+                    <th class="py-3.5 px-6" id="tbl-col-inc-main-date">Date</th>
+                    <th class="py-3.5 px-6" id="tbl-col-inc-main-status">Status</th>
+                    <th class="py-3.5 px-6 text-right" id="tbl-col-inc-main-actions">Change Status</th>
+                  </tr>
+                </thead>
+                <tbody id="incidents-tbody" class="divide-y divide-slate-100">
+                  <!-- Dynamic incidents rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fleet Registry -->
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+            <div>
+              <h3 class="font-bold text-base text-slate-900" id="title-fleet">Registered Vehicle Fleet</h3>
+              <p class="text-xs text-slate-400 mt-1" id="sub-fleet">Bind new customer telemetry hardware or deregister expired/withdrawn vehicle profiles</p>
+            </div>
+            
+            <button onclick="openBindVehicleModal()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span id="btn-bind-vehicle">Bind New Vehicle</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="fleet-container">
+            <!-- Dynamic fleet item cards -->
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= SECTION 5: ORDER OPERATIONS ================= -->
+      <section id="section-orders" class="space-y-6 hidden">
+        
+        <div class="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
+          <div>
+            <h3 class="font-bold text-lg text-slate-900" id="title-orders">Order Operations Hub</h3>
+            <p class="text-xs text-slate-400 mt-1" id="sub-orders">Audit package activation orders and authorize or transition active member subscription invoices</p>
+          </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-semibold font-mono text-[10px] uppercase border-b border-slate-200">
+                <tr>
+                  <th class="py-3.5 px-6" id="tbl-col-order-id">Order ID</th>
+                  <th class="py-3.5 px-6" id="tbl-col-order-pkg">Subscription Level</th>
+                  <th class="py-3.5 px-6 text-center font-mono" id="tbl-col-order-amt">Amount</th>
+                  <th class="py-3.5 px-6 text-center" id="tbl-col-order-status">Status</th>
+                  <th class="py-3.5 px-6 text-right font-semibold" id="tbl-col-order-action">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody" class="divide-y divide-slate-100">
+                <!-- Dynamic order items -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+
+  <!-- ========================================================= -->
+  <!-- ==================== DIALOG MODALS ===================== -->
+  <!-- ========================================================= -->
+
+  <!-- Parts Creation/Update Modal -->
+  <div id="modal-part" class="fixed inset-0 bg-slate-900/45 flex items-center justify-center p-4 z-50 transition-all duration-200 hidden">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all border border-slate-200">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <h4 id="mdl-part-title" class="font-bold text-slate-800 text-sm">Add New Catalog Part</h4>
+        <button onclick="closePartModal()" class="text-slate-450 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg transition-all">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="part-id-field">
+        
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-part-name">Product Name</label>
+          <input type="text" id="part-name-field" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-part-model">Compatible Vehicles / Model</label>
+          <input type="text" id="part-model-field" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-part-stock">Stock Quantity</label>
+            <input type="number" id="part-stock-field" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-part-price">Price ($)</label>
+            <input type="number" step="0.01" id="part-price-field" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+        </div>
+      </div>
+      <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button onclick="closePartModal()" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-semibold text-slate-700 transition" id="mdl-btn-part-cancel">Cancel</button>
+        <button onclick="savePartForm()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition shadow" id="mdl-btn-part-save">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Customer Creation/Update Modal -->
+  <div id="modal-customer" class="fixed inset-0 bg-slate-900/45 flex items-center justify-center p-4 z-50 transition-all duration-200 hidden">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all border border-slate-200">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <h4 id="mdl-customer-title" class="font-bold text-slate-800 text-sm">Add New Customer Account</h4>
+        <button onclick="closeCustomerModal()" class="text-slate-450 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg transition-all">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="customer-id-field">
+        
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-cust-name">Full Name</label>
+          <input type="text" id="customer-name-field" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-cust-tier">Tier / plan</label>
+            <select id="customer-tier-field" class="w-full px-3 py-2 text-xs border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option value="Basic">Basic</option>
+              <option value="Pro">Pro</option>
+              <option value="Enterprise">Enterprise</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-cust-status">Status</label>
+            <select id="customer-status-field" class="w-full px-3 py-2 text-xs border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option value="Active">Active</option>
+              <option value="Pending">Pending</option>
+              <option value="Frozen">Frozen</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-cust-orders">Invoiced Orders Count</label>
+          <input type="number" id="customer-orders-field" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+      </div>
+      <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button onclick="closeCustomerModal()" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-semibold text-slate-700 transition" id="mdl-btn-cust-cancel">Cancel</button>
+        <button onclick="saveCustomerForm()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition shadow" id="mdl-btn-cust-save">Save Client</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Bind Vehicle Modal -->
+  <div id="modal-bind-vehicle" class="fixed inset-0 bg-slate-900/45 flex items-center justify-center p-4 z-50 transition-all duration-200 hidden">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all border border-slate-200">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <h4 id="mdl-veh-title" class="font-bold text-slate-800 text-sm">Bind New Vehicle Profile</h4>
+        <button onclick="closeBindVehicleModal()" class="text-slate-450 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg transition-all">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-veh-plate">License Plate (Number)</label>
+          <input type="text" id="veh-plate-field" placeholder="E.g., 01 A 777 AA" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-veh-model">Vehicle Make / Model / VIN Code</label>
+          <input type="text" id="veh-model-field" placeholder="E.g., Chevrolet Malibu 2023" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-veh-emoji">Icon Indicator</label>
+          <select id="veh-icon-field" class="w-full px-3 py-2 text-xs border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <option value="🚗">🚗 Passenger Car</option>
+            <option value="🚙">🚙 SUV / Crossover</option>
+            <option value="🚐">🚐 Cargo Van</option>
+            <option value="🚛">🚛 Logistics Truck</option>
+            <option value="🏍️">🏍️ Motorcycle</option>
+          </select>
+        </div>
+      </div>
+      <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button onclick="closeBindVehicleModal()" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-semibold text-slate-700 transition" id="mdl-btn-veh-cancel">Cancel</button>
+        <button onclick="saveVehicleForm()" class="px-4 py-2 bg-slate-850 hover:bg-slate-750 text-white rounded-lg text-xs font-semibold transition shadow-md" id="mdl-btn-veh-save">Bind Hardware</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Incident Entry Register Modal -->
+  <div id="modal-incident" class="fixed inset-0 bg-slate-900/45 flex items-center justify-center p-4 z-50 transition-all duration-200 hidden">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl overflow-hidden transform transition-all border border-slate-200">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <h4 id="mdl-inc-title" class="font-bold text-slate-800 text-sm">Log New Fault / Incident</h4>
+        <button onclick="closeIncidentModal()" class="text-slate-450 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-1.5 rounded-lg transition-all">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-inc-select">Target Vehicle (Bound Fleet)</label>
+          <select id="inc-plate-select" class="w-full px-3 py-2 text-xs border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <!-- Populated with bound vehicles -->
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-inc-desc-title">Failure Description</label>
+          <textarea id="inc-desc-field" rows="3" placeholder="Describe mechanical fault or collision detail..." class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block" id="mdl-lbl-inc-status-title">Status</label>
+          <select id="inc-status-field" class="w-full px-3 py-2 text-xs border border-slate-200 bg-white rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <option value="Under Review">Under Review</option>
+            <option value="Processing">Processing</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+
+      </div>
+      <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <button onclick="closeIncidentModal()" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg text-xs font-semibold text-slate-700 transition" id="mdl-btn-inc-cancel">Cancel</button>
+        <button onclick="saveIncidentForm()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition shadow-md" id="mdl-btn-inc-save">Register Report</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Application Javascript Script Integration -->
+  <script src="/admin/app.js"></script>
+</body>
+</html>
